@@ -36,9 +36,10 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(buttonPin) == PUSHED) { playGame(); }
+  if (digitalRead(buttonPin) == PUSHED) {
+    playGame();
+  }
 }
-
 
 void playGame() {
   byte redValue   = randomFrequency();
@@ -86,7 +87,7 @@ void playGame() {
 
     turnOnLed(redControlPin, userSelectedRed);
     turnOnLed(greenControlPin, userSelectedGreen);
-    analogWrite(blueControlPin, userSelectedBlue);
+    turnOnLed(blueControlPin, userSelectedBlue);
   }
 
   // Button was pushed!
@@ -158,16 +159,10 @@ byte randomFrequency() {
 }
 
 short readLedValueFromDial(short pin) {
-  short dialFrequencies[] = {0, 256, 512, 768, 1023},
-        selectedFrequency = analogRead(pin);
+  short dialValue = analogRead(pin),
+        position = round(dialValue / 512.0);
 
-  byte ledFrequencies[] = {0, 128, 128, 128, 255};
-
-  for (int i = 0; i < 5; i++) {
-    if (selectedFrequency <= dialFrequencies[i]) {
-      return ledFrequencies[i];
-    }
-  }
+  return constrain((position * 128), 0, 255);
 }
 
 void testLeds() {
@@ -177,25 +172,37 @@ void testLeds() {
     playTone(speakerPin, 400, 500);
 
     turnOnLed(redPin, frequencies[i]);
+    turnOnLed(redControlPin, frequencies[i]);
     delay(500);
     digitalWrite(redPin, LOW);
+    digitalWrite(redControlPin, LOW);
 
     turnOnLed(greenPin, frequencies[i]);
+    turnOnLed(greenControlPin, frequencies[i]);
     delay(500);
     digitalWrite(greenPin, LOW);
+    digitalWrite(greenControlPin, LOW);
 
     turnOnLed(bluePin, frequencies[i]);
+    turnOnLed(blueControlPin, frequencies[i]);
     delay(500);
     digitalWrite(bluePin, LOW);
+    digitalWrite(blueControlPin, LOW);
 
     turnOnLed(redPin, frequencies[i]);
     turnOnLed(greenPin, frequencies[i]);
     turnOnLed(bluePin, frequencies[i]);
+    turnOnLed(redControlPin, frequencies[i]);
+    turnOnLed(greenControlPin, frequencies[i]);
+    turnOnLed(blueControlPin, frequencies[i]);
 
     delay(500);
     digitalWrite(redPin, LOW);
     digitalWrite(greenPin, LOW);
     digitalWrite(bluePin, LOW);
+    digitalWrite(redControlPin, LOW);
+    digitalWrite(greenControlPin, LOW);
+    digitalWrite(blueControlPin, LOW);
   }
 
   playTone(speakerPin, 600, 500);
